@@ -23,10 +23,10 @@ def offset_pledge_lists(pledges_lists, ref_date_pledges):
     return reordered_pledges_lists
 
 
-def pledge_by_date(query_date, ref_date, pledges):
+def pledge_by_date(ref_date, query_date, pledges):
 
     # Count how many days between today and the reference date
-    delta = (ref_date - query_date).days
+    delta = (query_date - ref_date).days
     count = len(pledges)
 
     return pledges[delta % count]

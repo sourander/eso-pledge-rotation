@@ -36,13 +36,29 @@ pledges_dlc = ["Falkreath Hold", "Fang Lair", "Scalecaller Peak", "Moon Hunter K
 pledges_lists = offset_pledge_lists([pledges_eaz, pledges_mid, pledges_dlc],
                                     [ez_on_ref_date, mid_on_ref_date, dlc_on_ref_date])
 
+# Print stats
+print(f'Counts of different pledges: Easy:{len(pledges_eaz)}, Mid: {len(pledges_mid)}, DLC:{len(pledges_dlc)}')
+
+
+###################
+# FIND THE MONDAY #
+###################
+today = date.today()
+monday_date = today - timedelta(days=today.weekday())
+
+
+##########
+# Print ##
+##########
+
+print(f'WEEK: {monday_date.isocalendar()[1]}')
+print(f" ")
 print(f"{'day yyyy-mm-dd':<19}{givers[0]:<25}{givers[1]:<25}{givers[2]}")
 print("="*89)
 
-for n in range(14):
-    
+for n in range(7):
     # Today + n days
-    n_day = date.today() + timedelta(days=n)
+    n_day = monday_date + timedelta(days=n)
 
     # Date stuff for printing purposes
     isodate = n_day.isoformat()
@@ -53,4 +69,6 @@ for n in range(14):
     mid = pledge_by_date(ref_date, n_day, pledges_lists[1])
     dlc = pledge_by_date(ref_date, n_day, pledges_lists[2])
 
-    print(f"{weekday:<4}{isodate:<15}{eaz:<25}{mid:<25}{dlc}")
+    print(f"{weekday:<4} {isodate:<15}{eaz:<25}{mid:<25}{dlc}")
+
+    print(f" ")

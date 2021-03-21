@@ -1,43 +1,33 @@
-from datetime import date, timedelta
+import configparser
+import json
+from datetime import date, datetime, timedelta
 from helpers.pledgetools import offset_pledge_lists, pledge_by_date
 
-#############
-# CONFIG ME #
-#############
-# Reference date - when the pledges of 'today' have been set below
-ref_date = date(2021, 1, 1)
+# CONFIG
+config_path = 'configs/pledges.ini'
 
-# Pledges today (or as of the reference date)
-ez_on_ref_date = "Fungal Grotto I"
-mid_on_ref_date = "Selene's Web"
-dlc_on_ref_date = "Stone Garden"
+# Load the configuration file
+config = configparser.ConfigParser()
+config.read(config_path)
 
-# Names in the order or easy, medium, dlc
-givers = ["Maj al-Ragath", "Glirion the Redbeard", "Urgarlag Chief-bane"]
+# Get the reference date in format yyyy/m/d
+ref_date = datetime.strptime(config.get('Reference', 'Date'), '%Y/%m/%d').date()
 
-pledges_eaz = ["Spindleclutch II", "Banished Cells I", "Fungal Grotto II",
-               "Spindleclutch I", "Darkshade II", "Elden Hollow I",
-               "Wayrest Sewers II", "Fungal Grotto I", "Banished Cells II",
-               "Darkshade Caverns I", "Elden Hollow II", "Wayrest Sewers I"]
+# Difficulty levels as they appear in the config.ini
+difficulties = ('Easy', 'Mid', 'DLC')
 
-pledges_mid = ["Direfrost Keep", "Vaults of Madness", "Crypt of Hearts II",
-               "City of Ash I", "Tempest Island", "Blackheart Haven",
-               "Arx Corinium", "Selene's Web", "City of Ash II",
-               "Crypt of Hearts I", "Volenfell", "Blessed Crucible"]
+# Get the reference date's pledges
+ref_date_pledges = [config.get('Reference', d) for d in difficulties]
 
-pledges_dlc = ["Falkreath Hold", "Fang Lair", "Scalecaller Peak", "Moon Hunter Keep",
-               "March of Sacrifices", "Depths of Malatar", "Frostvault", "Moongrave Fane",
-               "Lair of Maarselok", "Icereach", "Unhallowed Grave", "Stone Garden", "Castle Thorn",
-               "Imperial City Prison", "Ruins of Mazzatun", "White-Gold Tower",
-               "Cradle of Shadows", "Bloodroot Forge"]
+# Load the list of all pledges
+pledges_lists = [json.loads(config.get('Pledges', d)) for d in difficulties]
 
+# Order the lists
+pledges_ordered = offset_pledge_lists(pledges_lists, ref_date_pledges)
 
-# Reorder lists so that the 0th element is on reference day.
-pledges_lists = offset_pledge_lists([pledges_eaz, pledges_mid, pledges_dlc],
-                                    [ez_on_ref_date, mid_on_ref_date, dlc_on_ref_date])
 
 # Print stats
-print(f'Counts of different pledges: Easy:{len(pledges_eaz)}, Mid: {len(pledges_mid)}, DLC:{len(pledges_dlc)}')
+print(f'Counts of different pledges: Easy:{len(pledges_lists[0])}, Mid: {len(pledges_lists[1])}, DLC:{len(pledges_lists[2])}')
 
 
 ###################
@@ -46,6 +36,7 @@ print(f'Counts of different pledges: Easy:{len(pledges_eaz)}, Mid: {len(pledges_
 today = date.today()
 monday_date = today - timedelta(days=today.weekday())
 
+givers = ['A', 'B', 'C']
 
 ##########
 # Print ##
@@ -65,9 +56,9 @@ for n in range(7):
     weekday = n_day.strftime('%a')
 
     # Easy, Medium and DLC Pledges
-    eaz = pledge_by_date(ref_date, n_day, pledges_lists[0])
-    mid = pledge_by_date(ref_date, n_day, pledges_lists[1])
-    dlc = pledge_by_date(ref_date, n_day, pledges_lists[2])
+    eaz = pledge_by_date(ref_date, n_day, pledges_ordered[0])
+    mid = pledge_by_date(ref_date, n_day, pledges_ordered[1])
+    dlc = pledge_by_date(ref_date, n_day, pledges_ordered[2])
 
     print(f"{weekday:<4} {isodate:<15}{eaz:<25}{mid:<25}{dlc}")
 

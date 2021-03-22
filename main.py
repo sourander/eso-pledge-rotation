@@ -44,7 +44,7 @@ givers = ['Maj', 'Glirion', 'Urgarlag']
 
 print(f'WEEK: {monday_date.isocalendar()[1]}')
 print(f" ")
-print(f"{'day yyyy-mm-dd':<19}{givers[0]:<25}{givers[1]:<25}{givers[2]}")
+print(f"{'day yyyy-mm-dd':<20}{givers[0]:<25}{givers[1]:<25}{givers[2]}")
 print("="*89)
 
 for n in range(7):

@@ -36,6 +36,10 @@ print(f'Counts of different pledges: Easy:{len(pledges_lists[0])}, Mid: {len(ple
 today = date.today()
 monday_date = today - timedelta(days=today.weekday())
 
+# If it is Sunday, change to next week
+if today.weekday() == 6:
+    monday_date = monday_date + timedelta(days=7)
+
 givers = ['Maj', 'Glirion', 'Urgarlag']
 
 ##########

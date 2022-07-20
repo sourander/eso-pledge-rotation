@@ -1,34 +1,9 @@
-import configparser
-import json
-from datetime import date, datetime, timedelta
-from helpers.pledgetools import offset_pledge_lists, pledge_by_date
+from datetime import date, timedelta
+from helpers.pledgetools import pledge_by_date, pledges_reordered_by_config_date, get_ref_date
 
-# CONFIG
-config_path = 'configs/pledges.ini'
-
-# Load the configuration file
-config = configparser.ConfigParser()
-config.read(config_path)
-
-# Get the reference date in format yyyy/m/d
-ref_date = datetime.strptime(config.get('Reference', 'Date'), '%Y/%m/%d').date()
-
-# Difficulty levels as they appear in the config.ini
-difficulties = ('Easy', 'Mid', 'DLC')
-
-# Get the reference date's pledges
-ref_date_pledges = [config.get('Reference', d) for d in difficulties]
-
-# Load the list of all pledges
-pledges_lists = [json.loads(config.get('Pledges', d)) for d in difficulties]
-
-# Order the lists
-pledges_ordered = offset_pledge_lists(pledges_lists, ref_date_pledges)
-
-
-# Print stats
-print(f'Counts of different pledges: Easy:{len(pledges_lists[0])}, Mid: {len(pledges_lists[1])}, DLC:{len(pledges_lists[2])}')
-
+# Get the list of lists where 0th item of each list is the reference date's pledge
+pledges_ordered = pledges_reordered_by_config_date('configs/pledges.ini')
+ref_date = get_ref_date('configs/pledges.ini')
 
 ###################
 # FIND THE MONDAY #
@@ -49,7 +24,7 @@ givers = ['Maj', 'Glirion', 'Urgarlag']
 print(f'WEEK: {monday_date.isocalendar()[1]}')
 print(f" ")
 print(f"{'day yyyy-mm-dd':<20}{givers[0]:<25}{givers[1]:<25}{givers[2]}")
-print("="*89)
+print("=" * 89)
 
 for n in range(7):
     # Today + n days

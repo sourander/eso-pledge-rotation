@@ -5,15 +5,26 @@ from helpers.pledgetools import pledge_by_date, pledges_reordered_by_config_date
 pledges_ordered = pledges_reordered_by_config_date('configs/pledges.ini')
 ref_date = get_ref_date('configs/pledges.ini')
 
+
+#####################
+# HANDLE USER INPUT #
+#####################
+
+# Prompt the user to enter an integer offset
+offset_str = input("Enter a week number offset (default is 0): ")
+
+# Convert the input to an integer, or use the default value of 0
+try:
+    week_offset = int(offset_str)
+except ValueError:
+    week_offset = 0
+
+
 ###################
 # FIND THE MONDAY #
 ###################
-today = date.today()
+today = date.today() + timedelta(weeks=week_offset)
 monday_date = today - timedelta(days=today.weekday())
-
-# If it is Sunday, change to next week
-if today.weekday() == 6:
-    monday_date = monday_date + timedelta(days=7)
 
 givers = ['Maj', 'Glirion', 'Urgarlag']
 
